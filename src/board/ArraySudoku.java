@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import board.exceptions.AlreadySettledException;
 import board.exceptions.IllegalSizeException;
 
 public class ArraySudoku implements Sudoku, Iterable<Integer> {
@@ -27,9 +28,13 @@ public class ArraySudoku implements Sudoku, Iterable<Integer> {
 
 	public ArraySudoku(String str, int size) {
 		this(size);
-		for (int i = 0; i < str.length(); i++) {
+		String[] split = str.split(",");
+		for (int i = 0; i < split.length; i++) {
+			int value = Integer.parseInt(split[i]);	
 			int x = i % size, y = i / size;
-			set(x, y, str.charAt(i) - '0');
+			if(value == 0) continue;
+			set(x, y, value);
+			System.out.println(x + " " + y + " : " + value);
 			settle(x, y);
 		}
 	}
@@ -53,6 +58,7 @@ public class ArraySudoku implements Sudoku, Iterable<Integer> {
 
 	@Override
 	public List<Integer> getLegalMoves(int x, int y) {
+		if(isSettled(x, y)) throw new AlreadySettledException();
 		HashSet<Integer> illegalMoves = new HashSet<Integer>();
 		for (int i = 0; i < size; i++) {
 			illegalMoves.add((Integer) board[i][x]);
@@ -76,6 +82,11 @@ public class ArraySudoku implements Sudoku, Iterable<Integer> {
 		settledNodes.add(new Pair<Integer, Integer>(x, y));
 	}
 
+	@Override
+	public int getSize() {
+		return size;
+	}
+	
 	@Override
 	public String toString() {
 		String rv = "";
@@ -105,34 +116,6 @@ public class ArraySudoku implements Sudoku, Iterable<Integer> {
 			System.arraycopy(row, 0, newBoard[i], 0, s.size);
 		}
 		return newBoard;
-	}
-
-	public static void main(String[] args) {
-		ArraySudoku s = new ArraySudoku(4);
-		Pair<Integer, Integer> p1 = new Pair<Integer, Integer>(4, 4);
-		Pair<Integer, Integer> p2 = new Pair<Integer, Integer>(3, 4);
-		Pair<Integer, Integer> p3 = new Pair<Integer, Integer>(3, 4);
-		System.out.println(p1.equals(p2));
-		System.out.println(p3.equals(p2));
-		s.set(0, 0, 1);
-		s.settle(1, 1);
-		ArraySudoku s2 = new ArraySudoku(s);
-		s2.set(0, 3, 2);
-		s2.set(3, 0, 3);
-		s2.set(3, 3, 4);
-		s2.set(3, 2, 2);
-		s2.set(2, 3, 1);
-		System.out.println(s);
-		System.out.println(s2);
-		System.out.println(s2.isSettled(1, 2));
-		System.out.println(s2.getLegalMoves(1, 1));
-		System.out.println(s2.getLegalMoves(2, 2));
-		String str = "";
-		for (int i : s2) {
-			str += i;
-		}
-		s = new ArraySudoku(str, s2.size);
-		System.out.println(s);
 	}
 
 	@Override

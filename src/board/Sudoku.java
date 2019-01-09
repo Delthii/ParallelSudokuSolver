@@ -8,4 +8,5 @@ public interface Sudoku {
 	public List<Integer> getLegalMoves(int x, int y);
 	public boolean isSettled(int x, int y);
 	public void settle(int x, int y);
+	public int getSize();
 }
