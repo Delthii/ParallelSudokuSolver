@@ -10,8 +10,6 @@ public class BacktrackingSolver {
 		sudoku = s;
 	}
 
-	int max = 0;
-
 	public boolean solve(int sx, int sy) {
 		for (int y = sy; y < sudoku.getSize(); y++) {
 			for (int x = sx; x < sudoku.getSize(); x++) {
