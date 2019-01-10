@@ -46,7 +46,9 @@ public class ParallelSolver {
 					}
 				}
 			}
+			//infeasible solution or the real solution
 			if(!done){
+				//if this is the solution
 				tasks.addLast(parent);
 				break;
 			}
