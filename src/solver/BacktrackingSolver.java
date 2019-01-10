@@ -1,18 +1,41 @@
 package solver;
 
+import java.util.List;
+
 import board.ArraySudoku;
 import board.Sudoku;
 
 public class BacktrackingSolver {
 	private Sudoku sudoku;
-
-	BacktrackingSolver(Sudoku s) {
+	volatile boolean abort = false;
+	public BacktrackingSolver(Sudoku s) {
 		sudoku = s;
+		removeTrivials(sudoku);
 	}
 
-	public boolean solve(int sx, int sy) {
+	public static void removeTrivials(Sudoku sudoku){
+		boolean trivialsLeft = true;
+		while(trivialsLeft){
+			trivialsLeft = false;
+			for (int y = 0; y < sudoku.getSize(); y++) {
+				for (int x = 0; x < sudoku.getSize(); x++) {
+					if (!sudoku.isSettled(x, y)) {
+						List<Integer> legalMoves = sudoku.getLegalMoves(x, y);
+						if(legalMoves.size() == 1){
+							sudoku.set(x, y, legalMoves.get(0));
+							sudoku.settle(x, y);
+							trivialsLeft = true;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	public boolean solve(int sx, int sy) {		
 		for (int y = sy; y < sudoku.getSize(); y++) {
 			for (int x = sx; x < sudoku.getSize(); x++) {
+				if(abort) return false;
 				if (!sudoku.isSettled(x, y)) {
 					for (int legalMove : sudoku.getLegalMoves(x, y)) {
 						sudoku.set(x, y, legalMove);
@@ -34,6 +57,14 @@ public class BacktrackingSolver {
 		return true;
 	}
 
+	public void abort(){
+		abort = true;
+	}
+	
+	public Sudoku getSudoku(){
+		return sudoku;
+	}
+	
 	@Override
 	public String toString() {
 		return sudoku.toString();

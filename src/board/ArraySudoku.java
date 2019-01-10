@@ -34,7 +34,6 @@ public class ArraySudoku implements Sudoku, Iterable<Integer> {
 			int x = i % size, y = i / size;
 			if(value == 0) continue;
 			set(x, y, value);
-			System.out.println(x + " " + y + " : " + value);
 			settle(x, y);
 		}
 	}
@@ -61,12 +60,12 @@ public class ArraySudoku implements Sudoku, Iterable<Integer> {
 		if(isSettled(x, y)) throw new AlreadySettledException();
 		HashSet<Integer> illegalMoves = new HashSet<Integer>();
 		for (int i = 0; i < size; i++) {
-			illegalMoves.add((Integer) board[i][x]);
-			illegalMoves.add((Integer) board[y][i]);
+			illegalMoves.add(board[i][x]);
+			illegalMoves.add(board[y][i]);
 		}
 		for (int i = x - x % boxSize; i < x - x % boxSize + boxSize; i++) {
 			for (int j = y - y % boxSize; j < y - y % boxSize + boxSize; j++) {
-				illegalMoves.add((Integer) board[j][i]);
+				illegalMoves.add(board[j][i]);
 			}
 		}
 		return IntStream.rangeClosed(1, size).boxed().filter((m) -> !illegalMoves.contains(m)).collect(Collectors.toList());
